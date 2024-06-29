@@ -6,4 +6,5 @@ pytest_plugins = [
     'test.fixtures.temp_dir',
     'test.fixtures.symlinks',
     'test.fixtures.tar_file',
+    'test.fixtures.config_file',
 ]

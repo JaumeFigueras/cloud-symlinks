@@ -7,5 +7,9 @@ import logging
 
 @pytest.fixture(scope='function')
 def logger() -> logging.Logger:
+    """
+    TODO;
+    :return:
+    """
     return logging.getLogger('test_logger')
 

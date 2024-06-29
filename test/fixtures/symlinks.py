@@ -8,6 +8,10 @@ import os
 
 @pytest.fixture(scope='function')
 def directory_symlink() -> str:
+    """
+    TODO:
+    :return:
+    """
     temp_dir = tempfile.TemporaryDirectory()
     os.mkdir(os.path.join(temp_dir.name, 'symlinks'))
 
