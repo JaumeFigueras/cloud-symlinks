@@ -10,8 +10,10 @@ import configparser
 @pytest.fixture(scope='function')
 def empty_config_file() -> str:
     """
-    TODO:
-    :return:
+    Provides the path to an empty config file to be used by configparser tools
+
+    :return: The path to the empty config file as a string
+    :rtype: str
     """
     temp_dir = tempfile.TemporaryDirectory()
 
@@ -23,8 +25,10 @@ def empty_config_file() -> str:
 @pytest.fixture(scope='function')
 def config_file_other() -> str:
     """
-    TODO:
-    :return:
+    Provides the path to a config file with one entry in the section main. It is aimed to be used by configparser tools
+
+    :return: The path to the config file as a string
+    :rtype: str
     """
     temp_dir = tempfile.TemporaryDirectory()
     config_filename = os.path.join(temp_dir.name, 'cloud_symlinks.ini')
@@ -43,9 +47,13 @@ def config_file_other() -> str:
 @pytest.fixture(scope='function')
 def config_file(one_file_tar_file: str) -> str:
     """
-    TODO:
-    :param one_file_tar_file:
-    :return:
+    Provides the path to a config file with one entry OF A TAR FILE in the section main. The date of the configured
+    tar file is very old. It is aimed to be used by configparser tools
+
+    :param one_file_tar_file: Fixture containing the path to a tar file with one file in it
+    :type one_file_tar_file: str
+    :return: The path to the config file as a string
+    :rtype: str
     """
     temp_dir = tempfile.TemporaryDirectory()
     config_filename = os.path.join(temp_dir.name, 'cloud_symlinks.ini')

@@ -11,8 +11,10 @@ import os.path
 @pytest.fixture(scope='function')
 def blank_tar_file() -> str:
     """
-    TODO:
-    :return:
+    Fixture that provides a path to a blank (without any file inside) tar file.
+
+    :return: The path to a blank tar file
+    :rtype: str
     """
     temp_dir = tempfile.TemporaryDirectory()
     os.mkdir(os.path.join(temp_dir.name, 'tar'))
@@ -27,8 +29,10 @@ def blank_tar_file() -> str:
 @pytest.fixture(scope='function')
 def one_file_tar_file() -> str:
     """
-    TODO:
-    :return:
+    Fixture to provide a path to a tar file with one file inside it.
+
+    :return: The path to a blank tar file
+    :rtype: str
     """
     temp_dir = tempfile.TemporaryDirectory()
     os.mkdir(os.path.join(temp_dir.name, 'tar'))

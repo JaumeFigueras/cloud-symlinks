@@ -8,9 +8,10 @@ import pytest
 @pytest.fixture(scope='function')
 def temp_dir() -> str:
     """
-    TODO:
+    Fixture that provides a path to a temporary directory
 
-    :return:
+    :return: The path to a temporary directory as a string
+    :rtype: str
     """
     temp_dir = tempfile.TemporaryDirectory()
 

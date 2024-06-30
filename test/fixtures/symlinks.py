@@ -9,8 +9,10 @@ import os
 @pytest.fixture(scope='function')
 def directory_symlink() -> str:
     """
-    TODO:
-    :return:
+    Provides a fixture with the directory where the symbolic links are stored
+
+    :return: The path of the symbolic links directory as a string
+    :rtype: str
     """
     temp_dir = tempfile.TemporaryDirectory()
     os.mkdir(os.path.join(temp_dir.name, 'symlinks'))

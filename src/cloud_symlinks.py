@@ -174,7 +174,7 @@ class TarEventHandler(FileSystemEventHandler):
 
     def untar(self, event: watchdog.events.FileSystemEvent) -> None:
         """
-        Method that untars the tar file into the symbolic links directory
+        Method that extracts the tar file into the symbolic links directory
 
         :param event: The event that generated the untar execution
         :type event: watchdog.events.FileSystemEvent
@@ -234,7 +234,8 @@ def main(directory: str, tar_filename: str, log: logging.Logger, event: threadin
         sys.exit(1)
 
     # Load or creation of the configuration file
-    tar_file_time = datetime.datetime.utcfromtimestamp(int(os.path.getmtime(tar_filename))).strftime('%Y-%m-%d %H:%M:%S')
+    tar_file_time = (datetime.datetime.utcfromtimestamp(int(os.path.getmtime(tar_filename))).
+                     strftime('%Y-%m-%d %H:%M:%S'))
     config = configparser.ConfigParser()
     config.read(config_filename)
     if 'main' in config.sections():
@@ -249,7 +250,8 @@ def main(directory: str, tar_filename: str, log: logging.Logger, event: threadin
                         log.info("Extracting file {0:} with {1:} elements.".format(tar_filename, len(tar.getnames())))
                         tar.extractall(directory, members=tar.getmembers())
                         tar.close()
-                    tar_file_time = datetime.datetime.utcfromtimestamp(int(os.path.getmtime(tar_filename))).strftime('%Y-%m-%d %H:%M:%S')
+                    tar_file_time = (datetime.datetime.utcfromtimestamp(int(os.path.getmtime(tar_filename))).
+                                     strftime('%Y-%m-%d %H:%M:%S'))
                     config.set('main', tar_filename, tar_file_time)
                     with open(config_filename, 'w') as f:
                         config.write(f)
@@ -302,11 +304,14 @@ if __name__ == "__main__":  # pragma: no cover
     # Turn on the logger
     logger = logging.getLogger(__name__)
     if args.log_file is not None:
-        handler = RotatingFileHandler(args.log_file, mode='a', maxBytes=5*1024*1024, backupCount=15, encoding='utf-8', delay=False)
-        logging.basicConfig(format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', handlers=[handler], encoding='utf-8', level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
+        handler = RotatingFileHandler(args.log_file, mode='a', maxBytes=5*1024*1024, backupCount=15, encoding='utf-8',
+                                      delay=False)
+        logging.basicConfig(format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', handlers=[handler],
+                            encoding='utf-8', level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
     else:
         handler = ch = logging.StreamHandler()
-        logging.basicConfig(format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', handlers=[handler], encoding='utf-8', level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
+        logging.basicConfig(format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', handlers=[handler],
+                            encoding='utf-8', level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
 
     # Set up the config file
     config_dir = os.path.dirname(os.path.realpath(__file__))
