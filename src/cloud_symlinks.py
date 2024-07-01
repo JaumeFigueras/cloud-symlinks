@@ -16,6 +16,7 @@ import watchdog.events
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from watchdog.events import FileModifiedEvent
+from watchdog.events import DirModifiedEvent
 
 from logging.handlers import RotatingFileHandler
 
@@ -92,6 +93,16 @@ class SymLinksEventHandler(FileSystemEventHandler):
         """
         if not self._controlled_change:
             self.log.info("Directory changed. Event: {0:}.".format(str(event)))
+            try:
+                self.tar_event_handler.controlled_change = True
+                os.remove(self.tar_filename)
+                with tarfile.open(self.tar_filename, "w:gz") as tar:
+                    self.log.info("Compressed symbolic links directory {0:}.".format(self.symlinks_directory))
+                    for fn in os.listdir(self.symlinks_directory):
+                        tar.add(os.path.join(self.symlinks_directory, fn), arcname=fn)
+                    tar.close()
+            except Exception as xcpt:
+                self.log.error("Error compressing symbolic links. Exception: {0:}.".format(str(xcpt)))
         else:
             self._controlled_change = False
         self.timer = None
@@ -104,10 +115,11 @@ class SymLinksEventHandler(FileSystemEventHandler):
         :type event: watchdog.events.FileSystemEvent
         :return: Nothing
         """
-        if self.timer is not None:
-            self.timer.cancel()
-        self.timer = threading.Timer(0.5, self.compress, args=(event,))
-        self.timer.start()
+        if isinstance(event, DirModifiedEvent):
+            if self.timer is not None:
+                self.timer.cancel()
+            self.timer = threading.Timer(0.5, self.compress, args=(event,))
+            self.timer.start()
 
 
 class TarEventHandler(FileSystemEventHandler):
@@ -180,15 +192,19 @@ class TarEventHandler(FileSystemEventHandler):
         :type event: watchdog.events.FileSystemEvent
         :return: Nothing
         """
-        self.log.info("Tar file changed. Event: {0:}.".format(str(event)))
-        try:
-            with tarfile.open(self.tar_filename, "r:gz") as tar:
-                self._event_handler_symlinks.controlled_change = True
-                self.log.info("Extracting file {0:} with {1:} elements.".format(self.tar_filename, len(tar.getnames())))
-                tar.extractall(self.symlinks_directory, members=tar.getmembers())
-                tar.close()
-        except Exception as e:
-            self.log.error("Failed to extract file {0:}. Error: {1:}".format(self.tar_filename, str(e)))
+        if not self._controlled_change:
+            self.log.info("Tar file changed. Event: {0:}.".format(str(event)))
+            try:
+                with tarfile.open(self.tar_filename, "r:gz") as tar:
+                    self._event_handler_symlinks.controlled_change = True
+                    self.log.info("Extracting file {0:} with {1:} elements.".format(self.tar_filename,
+                                                                                    len(tar.getnames())))
+                    tar.extractall(self.symlinks_directory, members=tar.getmembers())
+                    tar.close()
+            except Exception as e:
+                self.log.error("Failed to extract file {0:}. Error: {1:}".format(self.tar_filename, str(e)))
+        else:
+            self.controlled_change = False
         self.timer = None
 
     def on_modified(self, event):
