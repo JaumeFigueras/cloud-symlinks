@@ -323,11 +323,11 @@ if __name__ == "__main__":  # pragma: no cover
         handler = RotatingFileHandler(args.log_file, mode='a', maxBytes=5*1024*1024, backupCount=15, encoding='utf-8',
                                       delay=False)
         logging.basicConfig(format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', handlers=[handler],
-                            encoding='utf-8', level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
+                            encoding='utf-8', level=logging.INFO, datefmt="%Y-%m-%d %H:%M:%S")
     else:
         handler = ch = logging.StreamHandler()
         logging.basicConfig(format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', handlers=[handler],
-                            encoding='utf-8', level=logging.DEBUG, datefmt="%Y-%m-%d %H:%M:%S")
+                            encoding='utf-8', level=logging.INFO, datefmt="%Y-%m-%d %H:%M:%S")
 
     # Set up the config file
     config_dir = os.path.dirname(os.path.realpath(__file__))
