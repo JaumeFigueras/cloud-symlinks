@@ -22,6 +22,10 @@ from logging.handlers import RotatingFileHandler
 
 
 class SymLinksEventHandler(FileSystemEventHandler):
+    """
+    TODO: Change ini file when the compression is finished
+    """
+
     def __init__(self, tar_filename: str, symlinks_directory: str, log: logging.Logger) -> None:
         """
         Class creator
