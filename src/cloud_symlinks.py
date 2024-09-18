@@ -26,7 +26,7 @@ class SymLinksEventHandler(FileSystemEventHandler):
     TODO: Change ini file when the compression is finished
     """
 
-    def __init__(self, tar_filename: str, symlinks_directory: str, log: logging.Logger) -> None:
+    def __init__(self, tar_filename: str, symlinks_directory: str, recursive: bool,  log: logging.Logger) -> None:
         """
         Class creator
 
@@ -40,6 +40,7 @@ class SymLinksEventHandler(FileSystemEventHandler):
         super().__init__()
         self.tar_filename = tar_filename
         self.symlinks_directory = symlinks_directory
+        self.recursive = recursive
         self.log = log
         self.timer = None
         self._controlled_change = False
@@ -102,8 +103,24 @@ class SymLinksEventHandler(FileSystemEventHandler):
                 os.remove(self.tar_filename)
                 with tarfile.open(self.tar_filename, "w:gz") as tar:
                     self.log.info("Compressed symbolic links directory {0:}.".format(self.symlinks_directory))
-                    for fn in os.listdir(self.symlinks_directory):
-                        tar.add(os.path.join(self.symlinks_directory, fn), arcname=fn)
+                    if not self.recursive:
+                        for fn in os.listdir(self.symlinks_directory):
+                            tar.add(os.path.join(self.symlinks_directory, fn), arcname=fn)
+                    else:
+                        walked = list(os.walk(self.symlinks_directory))
+                        toplevel = walked[0]
+                        symlinks = list()
+                        folders = walked[1:]
+                        for folder in folders:
+                            # symlinks will be listed in the walk folders, but are not
+                            # present in the tail of the walk list
+                            basedir = folder[0]
+                            files = folder[2]
+                            for file in files:
+                                if os.path.islink(os.path.join(basedir, file)):
+                                    symlinks.append(os.path.join(basedir.replace(self.symlinks_directory, '')[1:], file))
+                        for file in symlinks:
+                            tar.add(os.path.join(self.symlinks_directory, file), arcname=file)
                     tar.close()
             except Exception as xcpt:
                 self.log.error("Error compressing symbolic links. Exception: {0:}.".format(str(xcpt)))
@@ -226,7 +243,7 @@ class TarEventHandler(FileSystemEventHandler):
             self.timer.start()
 
 
-def main(directory: str, tar_filename: str, log: logging.Logger, event: threading.Event, config_filename: str) -> None:
+def main(directory: str, tar_filename: str, log: logging.Logger, event: threading.Event, config_filename: str, recursive: bool) -> None:
     """
     Main function that tests for the existence of the tar file and symlink directory, loads the configuration file and
     starts the file system observers
@@ -293,8 +310,8 @@ def main(directory: str, tar_filename: str, log: logging.Logger, event: threadin
     # Creation and start of the file system observers
     observer_tar_file = Observer()
     observer_directory = Observer()
-    event_handler_dir = SymLinksEventHandler(tar_filename=tar_filename, symlinks_directory=directory, log=log)
-    observer_directory.schedule(event_handler_dir, directory, recursive=False)
+    event_handler_dir = SymLinksEventHandler(tar_filename=tar_filename, symlinks_directory=directory, recursive=recursive, log=log)
+    observer_directory.schedule(event_handler_dir, directory, recursive=True)
     event_handler_tar = TarEventHandler(tar_filename=tar_filename, symlinks_directory=directory, log=log)
     observer_tar_file.schedule(event_handler_tar, tar_filename, recursive=False)
     event_handler_dir.tar_event_handler = event_handler_tar
@@ -318,6 +335,7 @@ if __name__ == "__main__":  # pragma: no cover
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--dir', help='Directory to tar', required=True)
     parser.add_argument('-f', '--tar-file', help='Location of the tar file containing ', required=True)
+    parser.add_argument('-r', '--recursive', help='Location of the tar file containing ', required=False, action='store_true')
     parser.add_argument('-l', '--log-file', help='Log file to record program progress', required=False, default=None)
     args = parser.parse_args()
 
@@ -338,4 +356,4 @@ if __name__ == "__main__":  # pragma: no cover
     config_file = os.path.join(config_dir, 'cloud_symlinks.ini')
 
     # Run the watchdogs
-    main(args.dir, args.tar_file, logger, threading.Event(), config_file)
+    main(args.dir, args.tar_file, logger, threading.Event(), config_file, args.recursive)
