@@ -34,8 +34,9 @@ def test_changed_tar_file_01(caplog: pytest.LogCaptureFixture, logger: logging.L
     event = threading.Event()
     caplog.set_level(logging.INFO)
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, blank_tar_file, logger, event,
-                                                                   empty_config_file))
+                                                                   empty_config_file, False))
     thread.start()
+    time.sleep(2)  # allow the tar observer to start watching before modifying the file
     temp_dir = tempfile.TemporaryDirectory()
     f = open(os.path.join(temp_dir.name, 'test.txt'), 'w')
     f.write('hola')
@@ -77,8 +78,9 @@ def test_changed_tar_file_02(caplog: pytest.LogCaptureFixture, logger: logging.L
     event = threading.Event()
     caplog.set_level(logging.INFO)
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, blank_tar_file, logger, event,
-                                                                   empty_config_file))
+                                                                   empty_config_file, False))
     thread.start()
+    time.sleep(2)  # allow the tar observer to start watching before modifying the file
     temp_dir = tempfile.TemporaryDirectory()
     f = open(os.path.join(temp_dir.name, 'test-1.txt'), 'w')
     f.write('hola')
@@ -126,7 +128,7 @@ def test_changed_tar_file_03(caplog: pytest.LogCaptureFixture, logger: logging.L
     event = threading.Event()
     caplog.set_level(logging.INFO)
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, blank_tar_file, logger, event,
-                                                                   empty_config_file))
+                                                                   empty_config_file, False))
     thread.start()
     time.sleep(2)
     with tarfile.open(blank_tar_file, "w:gz") as tar:

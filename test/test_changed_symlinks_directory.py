@@ -33,7 +33,7 @@ def test_changed_symlink_directory_01(caplog: pytest.LogCaptureFixture, logger: 
     event = threading.Event()
     caplog.set_level(logging.INFO)
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, blank_tar_file, logger, event,
-                                                                   empty_config_file))
+                                                                   empty_config_file, False))
     thread.start()
     for i in range(10):
         f = open(os.path.join(directory_symlink, "test-{0:}.txt".format(i)), 'w')
@@ -76,7 +76,7 @@ def test_changed_symlink_directory_02(caplog: pytest.LogCaptureFixture, logger: 
     event = threading.Event()
     caplog.set_level(logging.INFO)
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, blank_tar_file, logger, event,
-                                                                   empty_config_file))
+                                                                   empty_config_file, False))
     thread.start()
     time.sleep(1)
     os.rename(blank_tar_file, blank_tar_file + '.bak')
@@ -118,7 +118,7 @@ def test_changed_symlink_directory_03(caplog: pytest.LogCaptureFixture, logger: 
         f.write('hola')
         f.close()
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, blank_tar_file, logger, event,
-                                                                   empty_config_file))
+                                                                   empty_config_file, False))
     thread.start()
     time.sleep(1)
     for i in range(2):
@@ -162,7 +162,7 @@ def test_changed_symlink_directory_04(caplog: pytest.LogCaptureFixture, logger: 
         f.write('hola')
         f.close()
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, blank_tar_file, logger, event,
-                                                                   empty_config_file))
+                                                                   empty_config_file, False))
     thread.start()
     time.sleep(1)
     for i in range(2):
@@ -207,7 +207,7 @@ def test_changed_symlink_directory_05(caplog: pytest.LogCaptureFixture, logger: 
         f.write('hola')
         f.close()
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, blank_tar_file, logger, event,
-                                                                   empty_config_file))
+                                                                   empty_config_file, False))
     thread.start()
     time.sleep(1)
     for i in range(2):

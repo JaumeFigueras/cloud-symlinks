@@ -14,7 +14,7 @@ def test_properties_01(logger: logging.Logger):
     :param logger: Current logger to pass to the main program to write to.
     :type logger: logging.Logger
     """
-    event_handler_dir = SymLinksEventHandler(tar_filename="tar", symlinks_directory="dir", log=logger)
+    event_handler_dir = SymLinksEventHandler(tar_filename="tar", symlinks_directory="dir", recursive=False, log=logger)
     event_handler_tar = TarEventHandler(tar_filename="tar", symlinks_directory="dir", log=logger)
     event_handler_dir.tar_event_handler = event_handler_tar
     event_handler_tar.symlink_event_handler = event_handler_dir

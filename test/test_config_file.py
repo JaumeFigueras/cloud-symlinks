@@ -34,7 +34,7 @@ def test_config_file_01(caplog: pytest.LogCaptureFixture, logger: logging.Logger
     event = threading.Event()
     caplog.set_level(logging.INFO)
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, blank_tar_file, logger, event,
-                                                                   empty_config_file))
+                                                                   empty_config_file, False))
     thread.start()
     time.sleep(1)
     event.set()
@@ -71,7 +71,7 @@ def test_config_file_02(caplog: pytest.LogCaptureFixture, logger: logging.Logger
     event = threading.Event()
     caplog.set_level(logging.INFO)
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, blank_tar_file, logger, event,
-                                                                   config_file_other))
+                                                                   config_file_other, False))
     thread.start()
     time.sleep(1)
     event.set()
@@ -108,7 +108,7 @@ def test_config_file_03(caplog: pytest.LogCaptureFixture, logger: logging.Logger
     event = threading.Event()
     caplog.set_level(logging.INFO)
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, one_file_tar_file, logger, event,
-                                                                   config_file))
+                                                                   config_file, False))
     thread.start()
     time.sleep(2)
     event.set()
@@ -150,7 +150,7 @@ def test_config_file_04(caplog: pytest.LogCaptureFixture, logger: logging.Logger
     caplog.set_level(logging.INFO)
     os.chmod(directory_symlink, 0o444)
     thread: threading.Thread = threading.Thread(target=main, args=(directory_symlink, one_file_tar_file, logger, event,
-                                                                   config_file))
+                                                                   config_file, False))
     thread.start()
     time.sleep(2)
     event.set()

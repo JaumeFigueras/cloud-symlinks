@@ -22,7 +22,7 @@ def test_dir_not_exist(caplog: pytest.LogCaptureFixture, logger: logging.Logger,
     :return: Nothing
     """
     with pytest.raises(SystemExit):
-        main(temp_dir + '/symlinks', 'tar_file', logger, threading.Event(), empty_config_file)
+        main(temp_dir + '/symlinks', 'tar_file', logger, threading.Event(), empty_config_file, False)
         assert len(caplog.records) == 1
         for record in caplog.records:
             assert record.levelname == "ERROR"
@@ -44,7 +44,7 @@ def test_tar_file_not_exist(caplog: pytest.LogCaptureFixture, logger: logging.Lo
     :return: Nothing
     """
     with pytest.raises(SystemExit):
-        main(directory_symlink, 'tar_file', logger, threading.Event(), empty_config_file)
+        main(directory_symlink, 'tar_file', logger, threading.Event(), empty_config_file, False)
         assert len(caplog.records) == 1
         for record in caplog.records:
             assert record.levelname == "ERROR"
