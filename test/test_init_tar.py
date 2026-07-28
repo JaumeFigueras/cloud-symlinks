@@ -85,7 +85,7 @@ def test_build_tar_roundtrip_extract(directory_symlink_recursive: dict, blank_ta
     build_tar(directory_symlink_recursive['directory'], blank_tar_file, recursive=True)
 
     with tarfile.open(blank_tar_file, 'r:gz') as tar:
-        tar.extractall(directory_symlink)
+        tar.extractall(directory_symlink, filter='fully_trusted')
 
     for arcname, target in directory_symlink_recursive['targets'].items():
         extracted = os.path.join(directory_symlink, arcname)

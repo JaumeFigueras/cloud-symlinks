@@ -125,7 +125,7 @@ def test_config_file_03(caplog: pytest.LogCaptureFixture, logger: logging.Logger
     assert len(config.sections()) == 1
     assert config.has_section('main')
     assert one_file_tar_file in config['main']
-    assert config['main'][one_file_tar_file].startswith(datetime.datetime.utcnow().strftime("%Y-%m-%d"))
+    assert config['main'][one_file_tar_file].startswith(datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"))
 
 
 def test_config_file_04(caplog: pytest.LogCaptureFixture, logger: logging.Logger, directory_symlink: str,

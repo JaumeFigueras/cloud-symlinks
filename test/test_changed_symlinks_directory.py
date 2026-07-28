@@ -48,7 +48,7 @@ def test_changed_symlink_directory_01(caplog: pytest.LogCaptureFixture, logger: 
         assert record.levelname == "INFO"
     temp_dir = tempfile.TemporaryDirectory()
     with tarfile.open(blank_tar_file, "r:gz") as tar:
-        tar.extractall(temp_dir.name,  members=tar.getmembers())
+        tar.extractall(temp_dir.name,  members=tar.getmembers(), filter='fully_trusted')
         tar.close()
     assert len(os.listdir(temp_dir.name)) == 10
 
@@ -132,7 +132,7 @@ def test_changed_symlink_directory_03(caplog: pytest.LogCaptureFixture, logger: 
         assert record.levelname == "INFO"
     temp_dir = tempfile.TemporaryDirectory()
     with tarfile.open(blank_tar_file, "r:gz") as tar:
-        tar.extractall(temp_dir.name,  members=tar.getmembers())
+        tar.extractall(temp_dir.name,  members=tar.getmembers(), filter='fully_trusted')
         tar.close()
     assert len(os.listdir(temp_dir.name)) == 8
 
@@ -177,7 +177,7 @@ def test_changed_symlink_directory_04(caplog: pytest.LogCaptureFixture, logger: 
         assert record.levelname == "INFO"
     temp_dir = tempfile.TemporaryDirectory()
     with tarfile.open(blank_tar_file, "r:gz") as tar:
-        tar.extractall(temp_dir.name,  members=tar.getmembers())
+        tar.extractall(temp_dir.name,  members=tar.getmembers(), filter='fully_trusted')
         tar.close()
     assert len(os.listdir(temp_dir.name)) == 10
 
@@ -223,6 +223,6 @@ def test_changed_symlink_directory_05(caplog: pytest.LogCaptureFixture, logger: 
         assert record.levelname == "INFO"
     temp_dir = tempfile.TemporaryDirectory()
     with tarfile.open(blank_tar_file, "r:gz") as tar:
-        tar.extractall(temp_dir.name,  members=tar.getmembers())
+        tar.extractall(temp_dir.name,  members=tar.getmembers(), filter='fully_trusted')
         tar.close()
     assert len(os.listdir(temp_dir.name)) == 10

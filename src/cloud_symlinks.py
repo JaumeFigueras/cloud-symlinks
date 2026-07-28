@@ -220,7 +220,7 @@ class TarEventHandler(FileSystemEventHandler):
                     self._event_handler_symlinks.controlled_change = True
                     self.log.info("Extracting file {0:} with {1:} elements.".format(self.tar_filename,
                                                                                     len(tar.getnames())))
-                    tar.extractall(self.symlinks_directory, members=tar.getmembers())
+                    tar.extractall(self.symlinks_directory, members=tar.getmembers(), filter='fully_trusted')
                     tar.close()
             except Exception as e:
                 self.log.error("Failed to extract file {0:}. Error: {1:}".format(self.tar_filename, str(e)))
@@ -271,7 +271,7 @@ def main(directory: str, tar_filename: str, log: logging.Logger, event: threadin
         sys.exit(1)
 
     # Load or creation of the configuration file
-    tar_file_time = (datetime.datetime.utcfromtimestamp(int(os.path.getmtime(tar_filename))).
+    tar_file_time = (datetime.datetime.fromtimestamp(int(os.path.getmtime(tar_filename)), datetime.timezone.utc).
                      strftime('%Y-%m-%d %H:%M:%S'))
     config = configparser.ConfigParser()
     config.read(config_filename)
@@ -285,9 +285,9 @@ def main(directory: str, tar_filename: str, log: logging.Logger, event: threadin
                 try:
                     with tarfile.open(tar_filename, "r:gz") as tar:
                         log.info("Extracting file {0:} with {1:} elements.".format(tar_filename, len(tar.getnames())))
-                        tar.extractall(directory, members=tar.getmembers())
+                        tar.extractall(directory, members=tar.getmembers(), filter='fully_trusted')
                         tar.close()
-                    tar_file_time = (datetime.datetime.utcfromtimestamp(int(os.path.getmtime(tar_filename))).
+                    tar_file_time = (datetime.datetime.fromtimestamp(int(os.path.getmtime(tar_filename)), datetime.timezone.utc).
                                      strftime('%Y-%m-%d %H:%M:%S'))
                     config.set('main', tar_filename, tar_file_time)
                     with open(config_filename, 'w') as f:
